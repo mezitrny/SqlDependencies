@@ -2,78 +2,65 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Domain.Model.Entities.ScriptEntity;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace SqlAnalyser
 {
-	public class SqlParser : ISqlparser
+	public class SqlParser
 	{
-		public IEnumerable<string> Parse(string text)
+		public static IEnumerable<TSqlBatch> Parse(string sql, SqlVersion version)
 		{
-			if (string.IsNullOrWhiteSpace(text))
+			var parser = GetParser(version);
+			
+			using (var reader = new StringReader(sql.Trim()))
 			{
-				return new List<string>();
-			}
-
-			var scriptFragment = InnerParse(text, true);
-
-			if (!(scriptFragment is TSqlScript tsqlScriptFragment))
-			{
-				return new List<string>();
-			}
-
-			return GenerateScripts(tsqlScriptFragment);
-		}
-
-		private IEnumerable<string> GenerateScripts(TSqlFragment scriptFragment)
-		{
-			return SplitByGo(scriptFragment)
-				.Select(batch => string.Join("", batch).Trim())
-				.Where(result => result.Any());
-		}
-
-		private IEnumerable<IEnumerable<string>> SplitByGo(TSqlFragment scriptFragment)
-		{
-			var batch = new List<string>();
-
-			foreach (var token in scriptFragment.ScriptTokenStream)
-			{
-				if (token.TokenType != TSqlTokenType.Go)
+				var fragment = parser.Parse(reader, out var errorlist);
+					
+				if (errorlist != null && errorlist.Count > 0)
 				{
-					batch.Add(token.Text);
-					continue;
+					var messages = errorlist.Select(x => $"{x.Number}({x.Line}/{x.Column}): {x.Message}");
+					throw new ArgumentException($"Unparsable sql: {string.Join("\n", messages)}");
 				}
 
-				yield return batch;
-				batch = new List<string>();
-			}
-
-			if (batch.Any())
-			{
-				yield return batch;
+				if (fragment is TSqlScript script)
+				{
+					return script.Batches;
+				}
+				
+				return new TSqlBatch[]{ };
 			}
 		}
 
-		private TSqlFragment InnerParse(
-			string sql,
-			bool quotedIdentifiers)
+		public string ReScript(TSqlBatch batch)
 		{
-			using (var sr = new StringReader(sql.Trim()))
+			var tokens = batch.ScriptTokenStream
+				.Skip(batch.FirstTokenIndex)
+				.Take(batch.FragmentLength)
+				.Select(x => x.Text);
+			
+			return string.Join(string.Empty, tokens);
+		}
+		
+		private static TSqlParser GetParser(SqlVersion level)
+		{
+			switch (level)
 			{
-				var parser = new TSql140Parser(quotedIdentifiers);
-				var scriptFragment = parser.Parse(sr, out var errorlist);
-
-				if (errorlist == null || errorlist.Count <= 0)
-				{
-					return scriptFragment;
-				}
-
-				var message = string.Join(
-					"\n", 
-					errorlist.Select(x => $"{x.Number}({x.Line}/{x.Column}): {x.Message}"));
-
-				throw new ArgumentException($"Unparsable sql: {message}");
+				case SqlVersion.Sql80:
+					return new TSql80Parser(true);
+				case SqlVersion.Sql90:
+					return new TSql90Parser(true);
+				case SqlVersion.Sql100:
+					return new TSql100Parser(true);
+				case SqlVersion.Sql110:
+					return new TSql110Parser(true);
+				case SqlVersion.Sql120:
+					return new TSql120Parser(true);
+				case SqlVersion.Sql130:
+					return new TSql130Parser(true);
+				case SqlVersion.Sql140:
+					return new TSql140Parser(true);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(level));
 			}
 		}
 	}

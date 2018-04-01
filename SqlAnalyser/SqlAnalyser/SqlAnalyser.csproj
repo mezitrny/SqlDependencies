@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SqlAnalyser</RootNamespace>
     <AssemblyName>SqlAnalyser</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,9 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISqlparser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reference.cs" />
+    <Compile Include="ReferenceScanner.cs" />
     <Compile Include="SqlParser.cs" />
+    <Compile Include="Scripts.cs" />
+    <Compile Include="TypeScanner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MicrosoftLibraries\Microsoft.SqlServer.TransactSql.dll" />
