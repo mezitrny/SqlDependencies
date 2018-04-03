@@ -8,20 +8,14 @@ namespace SqlAnalyser
 {
 	public class SqlParser
 	{
-		public static IEnumerable<TSqlBatch> Parse(string sql, SqlVersion version)
+		public static IEnumerable<TSqlBatch> Parse(string sql, SqlVersion version, out IList<ParseError> errors)
 		{
 			var parser = GetParser(version);
 			
 			using (var reader = new StringReader(sql.Trim()))
 			{
-				var fragment = parser.Parse(reader, out var errorlist);
+				var fragment = parser.Parse(reader, out errors);
 					
-				if (errorlist != null && errorlist.Count > 0)
-				{
-					var messages = errorlist.Select(x => $"{x.Number}({x.Line}/{x.Column}): {x.Message}");
-					throw new ArgumentException($"Unparsable sql: {string.Join("\n", messages)}");
-				}
-
 				if (fragment is TSqlScript script)
 				{
 					return script.Batches;

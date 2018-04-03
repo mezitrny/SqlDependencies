@@ -1,30 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace SqlAnalyser
 {
     public class ReferenceScanner : TSqlFragmentVisitor
 		{
-			public ReferenceScanner(string schema = "dbo", string database = null, string server = null)
+			public ReferenceScanner(string schema = "null", string database = null, string server = null)
 			{
-				_defaultSchema = schema;
-				_defaultDatabase = database;
-				_defaultServer = server;
+				_defaultSchema = schema ?? string.Empty;
+				_defaultDatabase = database ?? string.Empty;
+				_defaultServer = server ?? string.Empty;
 			}
 			
 			private readonly string _defaultSchema;
 			private readonly string _defaultDatabase;
 			private readonly string _defaultServer;
 			
-			private List<Reference> _references;
+			private List<ReferenceInfo> _references;
 			private TSqlBatch _batch;
 
-			private Reference _myName;
+			private ReferenceInfo _myName;
 
-			private Reference MyName
+			private ReferenceInfo MyName
 			{
 				get
 				{
@@ -33,22 +31,30 @@ namespace SqlAnalyser
 						var statement = _batch.Statements.SingleOrDefault();
 						if (statement is ProcedureStatementBody proc)
 						{
-							_myName = new Reference(
+							_myName = new ReferenceInfo(
 								Scripts.Procedure,
 								proc.ProcedureReference.Name.BaseIdentifier.Value,
-								proc.ProcedureReference.Name.SchemaIdentifier?.Value ?? _defaultSchema,
-								proc.ProcedureReference.Name.DatabaseIdentifier?.Value ?? _defaultDatabase,
-								proc.ProcedureReference.Name.ServerIdentifier?.Value ?? _defaultServer);
+								proc.ProcedureReference.Name.SchemaIdentifier?.Value ?? string.Empty,
+								proc.ProcedureReference.Name.DatabaseIdentifier?.Value ?? string.Empty,
+								proc.ProcedureReference.Name.ServerIdentifier?.Value ?? string.Empty);
+
+							_myName.Schema.DefaultName = _defaultSchema;
+							_myName.Database.DefaultName = _defaultDatabase;
+							_myName.Server.DefaultName = _defaultServer;
 						}
 						
 						if (statement is CreateOrAlterFunctionStatement func)
 						{
-							_myName = new Reference(
+							_myName = new ReferenceInfo(
 								Scripts.Function,
 								func.Name.BaseIdentifier.Value,
-								func.Name.SchemaIdentifier?.Value ?? _defaultSchema,
-								func.Name.DatabaseIdentifier?.Value ?? _defaultDatabase,
-								func.Name.ServerIdentifier?.Value ?? _defaultServer);
+								func.Name.SchemaIdentifier?.Value ?? string.Empty,
+								func.Name.DatabaseIdentifier?.Value ?? string.Empty,
+								func.Name.ServerIdentifier?.Value ?? string.Empty);
+							
+							_myName.Schema.DefaultName = _defaultSchema;
+							_myName.Database.DefaultName = _defaultDatabase;
+							_myName.Server.DefaultName = _defaultServer;
 						}
 					}
 
@@ -56,9 +62,9 @@ namespace SqlAnalyser
 				}
 			}
 
-			public IEnumerable<Reference> GetReferences(TSqlBatch batch)
+			public IEnumerable<ReferenceInfo> GetReferences(TSqlBatch batch)
 			{
-				_references = new List<Reference>();
+				_references = new List<ReferenceInfo>();
 				_batch = batch;
 				_myName = null;
 				
@@ -69,12 +75,16 @@ namespace SqlAnalyser
 			
 			public override void Visit(ProcedureReference node)
 			{
-				var reference = new Reference(
+				var reference = new ReferenceInfo(
 					Scripts.Procedure,
 					node.Name.BaseIdentifier.Value,
-					node.Name.SchemaIdentifier?.Value ?? _defaultSchema,
-					node.Name.DatabaseIdentifier?.Value ?? _defaultDatabase,
-					node.Name.ServerIdentifier?.Value ?? _defaultServer);
+					node.Name.SchemaIdentifier?.Value ?? string.Empty,
+					node.Name.DatabaseIdentifier?.Value ?? string.Empty,
+					node.Name.ServerIdentifier?.Value ?? string.Empty);
+				
+				reference.Schema.DefaultName = _defaultSchema;
+				reference.Database.DefaultName = _defaultDatabase;
+				reference.Server.DefaultName = _defaultServer;
 
 				if (reference != MyName)
 				{
@@ -86,7 +96,7 @@ namespace SqlAnalyser
 
 			public override void Visit(FunctionCall node)
 			{
-				_references.Add(new Reference(
+				_references.Add(new ReferenceInfo(
 					Scripts.Function, 
 					node.FunctionName.Value));
 				
@@ -95,12 +105,18 @@ namespace SqlAnalyser
 						
 			public override void Visit(NamedTableReference node)
 			{
-				_references.Add(new Reference(
+				var reference = new ReferenceInfo(
 					Scripts.Table, 
 					node.SchemaObject.BaseIdentifier.Value,
-					node.SchemaObject.SchemaIdentifier?.Value ?? _defaultSchema,
-					node.SchemaObject.DatabaseIdentifier?.Value ?? _defaultDatabase,
-					node.SchemaObject.ServerIdentifier?.Value ?? _defaultServer));
+					node.SchemaObject.SchemaIdentifier?.Value ?? string.Empty,
+					node.SchemaObject.DatabaseIdentifier?.Value ?? string.Empty,
+					node.SchemaObject.ServerIdentifier?.Value ?? string.Empty);
+				
+				reference.Schema.DefaultName = _defaultSchema;
+				reference.Database.DefaultName = _defaultDatabase;
+				reference.Server.DefaultName = _defaultServer;
+
+				_references.Add(reference);
 				
 				base.Visit(node);
 			}

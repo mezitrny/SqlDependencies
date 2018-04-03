@@ -12,7 +12,7 @@ namespace SqlAnalyser.Tests
         {
             var sql = "CREATE TABLE someTable (Id INT)";
 
-            var batch = SqlParser.Parse(sql, SqlVersion.Sql100);
+            var batch = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
@@ -24,7 +24,7 @@ namespace SqlAnalyser.Tests
         {
             var sql = "CREATE TABLE someTable (Id INT)\r\nSELECT 1 FROM someTable";
 
-            var batch = SqlParser.Parse(sql, SqlVersion.Sql100);
+            var batch = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
@@ -36,7 +36,7 @@ namespace SqlAnalyser.Tests
         {
             var sql = "CREATE PROCEDURE ThisOne AS BEGIN EXECUTE someProc @someParameter='A' END";
 
-            var batch = SqlParser.Parse(sql, SqlVersion.Sql100);
+            var batch = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
@@ -48,7 +48,7 @@ namespace SqlAnalyser.Tests
         {
             var sql = "CREATE FUNCTION ThisOne() RETURNS INT AS BEGIN RETURN SomeFunc() END";
 
-            var batch = SqlParser.Parse(sql, SqlVersion.Sql100);
+            var batch = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
@@ -60,7 +60,7 @@ namespace SqlAnalyser.Tests
         {
             var sql = "SELECT 1 FROM someTable";
 
-            var batch = SqlParser.Parse(sql, SqlVersion.Sql100);
+            var batch = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
