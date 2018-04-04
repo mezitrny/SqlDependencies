@@ -46,16 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Internal\BatchInfo.cs" />
-    <Compile Include="Internal\BatchTypes.cs" />
-    <Compile Include="Internal\NameScanner.cs" />
-    <Compile Include="Internal\NameVisitor.cs" />
-    <Compile Include="Internal\Qualifier.cs" />
-    <Compile Include="Internal\IdentifierInfo.cs" />
-    <Compile Include="Internal\ReferenceScanner.cs" />
-    <Compile Include="Internal\ReferenceTypes.cs" />
+    <Compile Include="Internal\Batches\BatchTypes.cs" />
+    <Compile Include="Internal\Batches\BatchInfo.cs" />
+    <Compile Include="Internal\Identifiers\IdentifierInfo.cs" />
+    <Compile Include="Internal\Identifiers\IdentifierTypes.cs" />
+    <Compile Include="Internal\Identifiers\Qualifier.cs" />
     <Compile Include="Internal\SqlParser.cs" />
-    <Compile Include="Internal\TypeScanner.cs" />
+    <Compile Include="Internal\Visitors\DoerVisitor.cs" />
+    <Compile Include="Internal\Visitors\ReferenceVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptInfo.cs" />
   </ItemGroup>

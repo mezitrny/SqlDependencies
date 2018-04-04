@@ -4,9 +4,9 @@ using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace SqlAnalyser.Internal
 {
-    public class NameVisitor : TSqlFragmentVisitor
+    public class DoerVisitor : TSqlFragmentVisitor
 		{
-			public NameVisitor(string schema = null, string database = null, string server = null)
+			public DoerVisitor(string schema = null, string database = null, string server = null)
 			{
 				_defaultSchema = schema ?? string.Empty;
 				_defaultDatabase = database ?? string.Empty;

@@ -95,15 +95,6 @@ namespace SqlAnalyser
             }
         }
         
-        /*
-         *if (errorlist != null && errorlist.Count > 0)
-				{
-					var messages = errorlist.Select(x => $"{x.Number}({x.Line}/{x.Column}): {x.Message}");
-					throw new ArgumentException($"Unparsable sql: {string.Join("\n", messages)}");
-				}
-         * 
-         */
-
         public bool Valid => !Errors.Any();
 
         private List<BatchInfo> _batches;
@@ -169,7 +160,7 @@ namespace SqlAnalyser
                 {
                     var types = Doers.Distinct().Select(x => x.BatchTypes).ToList();
 
-                    _batchType = types.Count == 1 ? types.First() : BatchTypes.Other;
+                    _batchType = types.Count == 1 ? types.First() : Internal.BatchTypes.Other;
                 }
 
                 return _batchType.Value;

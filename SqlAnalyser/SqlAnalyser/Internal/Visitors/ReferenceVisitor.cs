@@ -4,18 +4,18 @@ using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace SqlAnalyser.Internal
 {
-    public class ReferenceScanner : TSqlFragmentVisitor
+    public class ReferenceVisitor : TSqlFragmentVisitor
     {
 	    private List<IdentifierInfo> _doers;
 			
-		public ReferenceScanner(string schema = null, string database = null, string server = null)
+		public ReferenceVisitor(string schema = null, string database = null, string server = null)
 		{
 			_defaultSchema = schema ?? string.Empty;
 			_defaultDatabase = database ?? string.Empty;
 			_defaultServer = server ?? string.Empty;
 		}
 		
-		public ReferenceScanner(IEnumerable<IdentifierInfo> doers)
+		public ReferenceVisitor(IEnumerable<IdentifierInfo> doers)
 		{
 			_doers = doers.ToList();
 			
@@ -35,7 +35,7 @@ namespace SqlAnalyser.Internal
 	    {
 		    if (_doers == null)
 		    {
-			    _doers = new NameVisitor().GetReferences(batch).ToList();
+			    _doers = new DoerVisitor().GetReferences(batch).ToList();
 		    }
 
 		    doers = _doers;

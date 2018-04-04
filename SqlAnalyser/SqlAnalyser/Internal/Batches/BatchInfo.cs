@@ -103,7 +103,7 @@ namespace SqlAnalyser.Internal
             {
                 if (_doers == null)
                 {
-                    _doers = new NameVisitor(DefaultSchema, DefaultDatabase, DefaultServer).GetReferences(Value)
+                    _doers = new DoerVisitor(DefaultSchema, DefaultDatabase, DefaultServer).GetReferences(Value)
                         .ToList();
                 }
 
@@ -118,7 +118,7 @@ namespace SqlAnalyser.Internal
             {
                 if (_references == null)
                 {
-                    _references = new ReferenceScanner(DefaultSchema, DefaultDatabase, DefaultServer)
+                    _references = new ReferenceVisitor(DefaultSchema, DefaultDatabase, DefaultServer)
                         .GetReferences(Value, Doers).ToList();
                 }
 

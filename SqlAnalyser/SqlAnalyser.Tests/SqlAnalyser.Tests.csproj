@@ -51,11 +51,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NameVisitorTests.cs" />
+    <Compile Include="Internal\Batches\BatchInfoTests.cs" />
+    <Compile Include="Internal\Identifiers\IdentifierInfoTests.cs" />
+    <Compile Include="Internal\Identifiers\QualifierTests.cs" />
+    <Compile Include="Internal\SqlParserTests.cs" />
+    <Compile Include="Internal\Visitors\DoerVisitorTests.cs" />
+    <Compile Include="Internal\Visitors\ReferenceVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceScannerTests.cs" />
-    <Compile Include="SqlParserTests.cs" />
-    <Compile Include="TypeScannerTests.cs" />
+    <Compile Include="ScriptInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -65,9 +68,6 @@
       <Project>{ed1be32d-baf6-4ab6-a38b-29ddde40e6a1}</Project>
       <Name>SqlAnalyser</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="test.sql" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

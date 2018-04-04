@@ -14,7 +14,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    var batches = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 			
-		    var sut = new NameVisitor(schema, database, server);
+		    var sut = new DoerVisitor(schema, database, server);
 
 		    return batches.SelectMany(x => sut.GetReferences(x)).ToList();
 	    }

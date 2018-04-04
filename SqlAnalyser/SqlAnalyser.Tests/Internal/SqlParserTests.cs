@@ -24,7 +24,7 @@ namespace SqlAnalyser.Tests
 			if (!(scriptFragment is TSqlScript tsqlScriptFragment))
 				return;
 
-			var scanner = new ReferenceScanner();
+			var scanner = new ReferenceVisitor();
 			var batchForVisitor = tsqlScriptFragment.Batches.First();
 			var references = scanner.GetReferences(batchForVisitor);
 
