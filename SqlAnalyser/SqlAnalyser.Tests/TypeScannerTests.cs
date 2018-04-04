@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
+using SqlAnalyser.Internal;
 
 namespace SqlAnalyser.Tests
 {
@@ -16,7 +17,7 @@ namespace SqlAnalyser.Tests
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
-            Assert.That(result, Is.EqualTo(Scripts.Table));
+            Assert.That(result, Is.EqualTo(BatchTypes.Table));
         }
         
         [Test]
@@ -28,7 +29,7 @@ namespace SqlAnalyser.Tests
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
-            Assert.That(result, Is.EqualTo(Scripts.Table));
+            Assert.That(result, Is.EqualTo(BatchTypes.Table));
         }
         
         [Test]
@@ -40,7 +41,7 @@ namespace SqlAnalyser.Tests
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
-            Assert.That(result, Is.EqualTo(Scripts.Procedure));
+            Assert.That(result, Is.EqualTo(BatchTypes.Procedure));
         }
         
         [Test]
@@ -52,7 +53,7 @@ namespace SqlAnalyser.Tests
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
-            Assert.That(result, Is.EqualTo(Scripts.Function));
+            Assert.That(result, Is.EqualTo(BatchTypes.Function));
         }
         
         [Test]
@@ -64,7 +65,7 @@ namespace SqlAnalyser.Tests
 
             var result = new TypeScanner().ScanScriptType(batch.SingleOrDefault());
             
-            Assert.That(result, Is.EqualTo(Scripts.Other));
+            Assert.That(result, Is.EqualTo(BatchTypes.Other));
         }
     }
 }

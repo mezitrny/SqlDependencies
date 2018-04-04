@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser
+namespace SqlAnalyser.Internal
 {
     public class TypeScanner
     {
-        public Scripts ScanScriptType(TSqlBatch batch)
+        public BatchTypes ScanScriptType(TSqlBatch batch)
         {
             if (batch.Statements.Count == 0)
             {
-                return Scripts.Empty;
+                return BatchTypes.Empty;
             }
 
             if (batch.Statements.Count == 1)
@@ -18,16 +18,16 @@ namespace SqlAnalyser
 
                 if (statement is CreateProcedureStatement || statement is AlterProcedureStatement)
                 {
-                    return Scripts.Procedure;
+                    return BatchTypes.Procedure;
                 }
                 
                 if (statement is CreateFunctionStatement || statement is AlterFunctionStatement)
                 {
-                    return Scripts.Function;
+                    return BatchTypes.Function;
                 }
             }
             
-            return batch.Statements.Any(x => x is CreateTableStatement) ? Scripts.Table : Scripts.Other;
+            return batch.Statements.Any(x => x is CreateTableStatement) ? BatchTypes.Table : BatchTypes.Other;
         }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal;
 
 namespace SqlAnalyser
 {
@@ -114,11 +114,65 @@ namespace SqlAnalyser
                 if (_batches == null)
                 {
                     _batches = SqlParser.Parse(Sql, Version, out _errors)
-                        .Select((batch, order) => new BatchInfo(batch, order, DefaultSchema, DefaultDatabase, DefaultServer))
+                        .Select((batch, i) => new BatchInfo(batch, i, DefaultSchema, DefaultDatabase, DefaultServer))
                         .ToList();
                 }
 
                 return _batches;
+            }
+        }
+        
+        private List<IdentifierInfo> _doers;
+        public IEnumerable<IdentifierInfo> Doers
+        {
+            get
+            {
+                if (_doers == null)
+                {
+                    _doers = new List<IdentifierInfo>();
+
+                    foreach (var batch in Batches)
+                    {
+                         _doers.AddRange(batch.Doers);
+                    }
+                }
+
+                return _doers;
+            }
+        }
+
+        private List<IdentifierInfo> _references;
+        public IEnumerable<IdentifierInfo> References
+        {
+            get
+            {
+                if (_references == null)
+                {
+                    _references = new List<IdentifierInfo>();
+
+                    foreach (var batch in Batches)
+                    {
+                        _references.AddRange(batch.References);
+                    }
+                }
+
+                return _references;
+            }
+        }
+
+        private BatchTypes? _batchType;
+        public BatchTypes BatchType
+        {
+            get
+            {
+                if (!_batchType.HasValue)
+                {
+                    var types = Doers.Distinct().Select(x => x.BatchTypes).ToList();
+
+                    _batchType = types.Count == 1 ? types.First() : BatchTypes.Other;
+                }
+
+                return _batchType.Value;
             }
         }
     }

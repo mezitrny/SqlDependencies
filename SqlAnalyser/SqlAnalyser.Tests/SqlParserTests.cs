@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
+using SqlAnalyser.Internal;
 
 namespace SqlAnalyser.Tests
 {

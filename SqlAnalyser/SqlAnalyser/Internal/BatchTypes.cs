@@ -1,6 +1,6 @@
-﻿namespace SqlAnalyser
+﻿namespace SqlAnalyser.Internal
 {
-    public enum Scripts
+    public enum BatchTypes
     {
         Empty, Table, Procedure, Function, Other
     }

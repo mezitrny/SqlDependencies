@@ -2,10 +2,12 @@
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser
+namespace SqlAnalyser.Internal
 {
     public class BatchInfo
     {
+        public int Order { get; }
+        
         private string _defaultDatabase;
         public string DefaultDatabase
         {
@@ -15,6 +17,11 @@ namespace SqlAnalyser
                 if (value != _defaultDatabase)
                 {
                     foreach (var referenceInfo in _references)
+                    {
+                        referenceInfo.Database.DefaultName = value;
+                    }
+                    
+                    foreach (var referenceInfo in _doers)
                     {
                         referenceInfo.Database.DefaultName = value;
                     }
@@ -37,6 +44,11 @@ namespace SqlAnalyser
                         referenceInfo.Server.DefaultName = value;
                     }
                     
+                    foreach (var referenceInfo in _doers)
+                    {
+                        referenceInfo.Server.DefaultName = value;
+                    }
+                    
                     _defaultServer = value;
                 }
             }
@@ -51,6 +63,11 @@ namespace SqlAnalyser
                 if (value != _defaultSchema)
                 {
                     foreach (var referenceInfo in _references)
+                    {
+                        referenceInfo.Schema.DefaultName = value;
+                    }
+                    
+                    foreach (var referenceInfo in _doers)
                     {
                         referenceInfo.Schema.DefaultName = value;
                     }
@@ -79,39 +96,46 @@ namespace SqlAnalyser
             }
         }
 
-        public ScriptInfo Script { get; }
-        
-        public int Order { get; }
+        private List<IdentifierInfo> _doers;
+        public IEnumerable<IdentifierInfo> Doers
+        {
+            get
+            {
+                if (_doers == null)
+                {
+                    _doers = new NameVisitor(DefaultSchema, DefaultDatabase, DefaultServer).GetReferences(Value)
+                        .ToList();
+                }
 
-        private List<ReferenceInfo> _references;
+                return _doers;
+            }
+        }
 
-        public IEnumerable<ReferenceInfo> References
+        private List<IdentifierInfo> _references;
+        public IEnumerable<IdentifierInfo> References
         {
             get
             {
                 if (_references == null)
                 {
-                    var scanner = new ReferenceScanner(
-                        Script?.DefaultSchema,
-                        Script?.DefaultDatabase,
-                        Script?.DefaultServer);
-                    
-                    _references = scanner.GetReferences(Value).ToList();
+                    _references = new ReferenceScanner(DefaultSchema, DefaultDatabase, DefaultServer)
+                        .GetReferences(Value, Doers).ToList();
                 }
 
                 return _references;
             }
-            
         }
 
-        private Scripts? _batchType;
-        public Scripts BatchType
+        private BatchTypes? _batchType;
+        public BatchTypes BatchType
         {
             get
             {
                 if (!_batchType.HasValue)
                 {
-                    _batchType = new TypeScanner().ScanScriptType(Value);
+                    var types = Doers.Distinct().Select(x => x.BatchTypes).ToList();
+
+                    _batchType = types.Count == 1 ? types.First() : BatchTypes.Other;
                 }
 
                 return _batchType.Value;

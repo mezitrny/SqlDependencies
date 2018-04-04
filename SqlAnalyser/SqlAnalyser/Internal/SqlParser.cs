@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser
+namespace SqlAnalyser.Internal
 {
-	public class SqlParser
+	public static class SqlParser
 	{
 		public static IEnumerable<TSqlBatch> Parse(string sql, SqlVersion version, out IList<ParseError> errors)
 		{
@@ -25,16 +25,6 @@ namespace SqlAnalyser
 			}
 		}
 
-		public string ReScript(TSqlBatch batch)
-		{
-			var tokens = batch.ScriptTokenStream
-				.Skip(batch.FirstTokenIndex)
-				.Take(batch.FragmentLength)
-				.Select(x => x.Text);
-			
-			return string.Join(string.Empty, tokens);
-		}
-		
 		private static TSqlParser GetParser(SqlVersion level)
 		{
 			switch (level)

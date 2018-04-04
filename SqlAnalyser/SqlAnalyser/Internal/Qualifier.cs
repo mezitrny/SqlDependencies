@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SqlAnalyser
+﻿namespace SqlAnalyser.Internal
 {
     public class Qualifier
     {
@@ -48,7 +46,7 @@ namespace SqlAnalyser
             return Name.GetHashCode();
         }
 
-        public override bool Equals(object obj) => Equals(obj as ReferenceInfo);
+        public override bool Equals(object obj) => Equals(obj as IdentifierInfo);
 
         public bool Equals(Qualifier other)
         {

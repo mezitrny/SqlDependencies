@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
+using SqlAnalyser.Internal;
 
 namespace SqlAnalyser.Tests
 {
     [TestFixture]
     public class ReferenceScannerTests
     {
-	    private static List<ReferenceInfo> GetReferences(string sql, string schema = null, string database = null, 
+	    private static List<IdentifierInfo> GetReferences(string sql, string schema = null, string database = null, 
 		    string server = null)
 	    {
 		    var batches = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
@@ -23,7 +24,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInSelect()
 	    {
 		    const string sql = "SELECT * FROM myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "myTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "myTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -34,7 +35,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInInsert()
 	    {
 		    const string sql = "INSERT INTO someTable VALUES(1)";
-		    var reference = new ReferenceInfo(Scripts.Table, "someTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "someTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -45,7 +46,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInUpdate()
 	    {
 		    const string sql = "UPDATE someTable SET Id = 0";
-		    var reference = new ReferenceInfo(Scripts.Table, "someTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "someTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -56,7 +57,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInDelete()
 	    {
 		    const string sql = "DELETE FROM someTable WHERE Id = 0";
-		    var reference = new ReferenceInfo(Scripts.Table, "someTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "someTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -77,7 +78,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInSubSelect()
 	    {
 		    const string sql = "SELECT (SELECT TOP 1 Id FROM subTable) AS Id FROM myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "subTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "subTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -90,7 +91,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInWhere()
 	    {
 		    const string sql = "SELECT 1 AS Id FROM myTable WHERE 1 = (SELECT TOP 1 Id FROM subTable)";
-		    var reference = new ReferenceInfo(Scripts.Table, "subTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "subTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -103,7 +104,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindTableReferenceInJoin()
 	    {
 		    const string sql = "SELECT 1 AS Id FROM myTable AS mT JOIN subTable AS sT On mT.Id = sT.Id";
-		    var reference = new ReferenceInfo(Scripts.Table, "subTable");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "subTable");
 
 		    var result = GetReferences(sql);
 		    
@@ -116,7 +117,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFillDefaultIdentifiers()
 	    {
 		    const string sql = "SELECT * FROM myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "myTable", "someSchema", "someDb", "someServer");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "myTable", "someSchema", "someDb", "someServer");
 
 		    var result = GetReferences(sql, "someSchema", "someDb", "someServer");
 		    
@@ -127,7 +128,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindNamedTableReferenceInSelect()
 	    {
 		    const string sql = "SELECT * FROM dbo.myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "myTable", "dbo");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "myTable", "dbo");
 
 		    var result = GetReferences(sql);
 		    
@@ -138,7 +139,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindNamedTableReferenceWithSchemaDatabase()
 	    {
 		    const string sql = "SELECT * FROM db1.dbo.myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "myTable", "dbo", "db1", null);
+		    var reference = new IdentifierInfo(BatchTypes.Table, "myTable", "dbo", "db1", null);
 
 		    var result = GetReferences(sql);
 		    
@@ -149,7 +150,7 @@ namespace SqlAnalyser.Tests
 	    public void ShouldFindNamedTableReferenceWithSchemaDatabaseServer()
 	    {
 		    const string sql = "SELECT * FROM server1.db1.dbo.myTable";
-		    var reference = new ReferenceInfo(Scripts.Table, "myTable", "dbo", "db1", "server1");
+		    var reference = new IdentifierInfo(BatchTypes.Table, "myTable", "dbo", "db1", "server1");
 
 		    var result = GetReferences(sql);
 		    
@@ -161,7 +162,7 @@ namespace SqlAnalyser.Tests
         {
 	        const string sql = "SELECT * FROM [server1].[db1].[dbo].[myTable]";            			
 			
-	        var reference = new ReferenceInfo(Scripts.Table, "myTable", "dbo", "db1", "server1");
+	        var reference = new IdentifierInfo(BatchTypes.Table, "myTable", "dbo", "db1", "server1");
 
 	        var result = GetReferences(sql);
 		    
@@ -173,7 +174,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    const string sql = "EXECUTE someProc @someParameter='A'";            			
 			
-		    var reference = new ReferenceInfo(Scripts.Procedure, "someProc");
+		    var reference = new IdentifierInfo(BatchTypes.Procedure, "someProc");
 
 		    var result = GetReferences(sql);
 		    
@@ -185,7 +186,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    const string sql = "CREATE PROCEDURE ThisOne AS BEGIN EXECUTE someProc @someParameter='A' END";            			
 			
-		    var reference = new ReferenceInfo(Scripts.Procedure, "someProc");
+		    var reference = new IdentifierInfo(BatchTypes.Procedure, "someProc");
 
 		    var result = GetReferences(sql);
 		    
@@ -197,7 +198,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    const string sql = "ALTER PROCEDURE ThisOne AS BEGIN EXECUTE someProc @someParameter='A' END";            			
 			
-		    var reference = new ReferenceInfo(Scripts.Procedure, "someProc");
+		    var reference = new IdentifierInfo(BatchTypes.Procedure, "someProc");
 
 		    var result = GetReferences(sql);
 		    
@@ -219,7 +220,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    const string sql = "CREATE FUNCTION ThisOne() RETURNS INT AS BEGIN RETURN SomeFunc() END";            			
 			
-		    var reference = new ReferenceInfo(Scripts.Function, "SomeFunc");
+		    var reference = new IdentifierInfo(BatchTypes.Function, "SomeFunc");
 
 		    var result = GetReferences(sql);
 		    
@@ -231,7 +232,7 @@ namespace SqlAnalyser.Tests
 	    {
 		    const string sql = "ALTER FUNCTION ThisOne() RETURNS INT AS BEGIN RETURN SomeFunc() END";            			
 			
-		    var reference = new ReferenceInfo(Scripts.Function, "SomeFunc");
+		    var reference = new IdentifierInfo(BatchTypes.Function, "SomeFunc");
 
 		    var result = GetReferences(sql);
 		    
