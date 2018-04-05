@@ -19,6 +19,9 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
+[assembly: InternalsVisibleTo("SqlAnalyser.Tests")]
+
+
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("ed1be32d-baf6-4ab6-a38b-29ddde40e6a1")]
 

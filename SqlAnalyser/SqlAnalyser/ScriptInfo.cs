@@ -2,11 +2,14 @@
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using SqlAnalyser.Internal;
+using SqlAnalyser.Internal.Batches;
 
 namespace SqlAnalyser
 {
     public class ScriptInfo
     {
+        internal IBatchFactory BatchFactory = new BatchFactory();
+        
         public string Sql { get; }
         public SqlVersion Version { get; }
 
@@ -18,9 +21,12 @@ namespace SqlAnalyser
             {
                 if (value != _defaultDatabase)
                 {
-                    foreach (var batchInfo in _batches)
+                    if (_batches != null)
                     {
-                        batchInfo.DefaultDatabase = value;
+                        foreach (var batchInfo in _batches)
+                        {
+                            batchInfo.DefaultDatabase = value;
+                        }
                     }
                     
                     _defaultDatabase = value;
@@ -34,11 +40,14 @@ namespace SqlAnalyser
             get => _defaultServer;
             set
             {
-                foreach (var batchInfo in _batches)
+                if (_batches != null)
                 {
-                    batchInfo.DefaultServer = value;
+                    foreach (var batchInfo in _batches)
+                    {
+                        batchInfo.DefaultServer = value;
+                    }
                 }
-                
+
                 _defaultServer = value;
             }
         }
@@ -49,11 +58,14 @@ namespace SqlAnalyser
             get => _defaultSchema;
             set
             {
-                foreach (var batchInfo in _batches)
+                if (_batches != null)
                 {
-                    batchInfo.DefaultSchema = value;
+                    foreach (var batchInfo in _batches)
+                    {
+                        batchInfo.DefaultSchema = value;
+                    }
                 }
-                
+
                 _defaultSchema = value;
             }
         }
@@ -72,6 +84,12 @@ namespace SqlAnalyser
             DefaultSchema = schema;
         }
         
+        public ScriptInfo(string sql, SqlVersion version, params IBatchInfo[] batches)
+            : this(sql, version)
+        {
+            Batches = batches;
+        }
+        
         private IList<ParseError> _errors;
         public IEnumerable<ParseError> Errors
         {
@@ -79,38 +97,31 @@ namespace SqlAnalyser
             {
                 if (_errors == null)
                 {
-                    var batches = SqlParser.Parse(Sql, Version, out _errors);
-
-                    if (_errors.Any())
-                    {
-                        return _errors;
-                    }
-                    
-                    _batches = batches
-                        .Select((batch, order) => new BatchInfo(batch, order, DefaultSchema, DefaultDatabase, DefaultServer))
-                        .ToList();
+                    (Batches, Errors) = BatchFactory
+                        .Generate(Sql, Version, DefaultSchema, DefaultDatabase, DefaultServer);
                 }
 
                 return _errors;
             }
+            private set => _errors = value.ToList();
         }
         
         public bool Valid => !Errors.Any();
 
-        private List<BatchInfo> _batches;
-        public IEnumerable<BatchInfo> Batches
+        private List<IBatchInfo> _batches;
+        public IEnumerable<IBatchInfo> Batches
         {
             get
             {
                 if (_batches == null)
                 {
-                    _batches = SqlParser.Parse(Sql, Version, out _errors)
-                        .Select((batch, i) => new BatchInfo(batch, i, DefaultSchema, DefaultDatabase, DefaultServer))
-                        .ToList();
+                    (Batches, Errors) = BatchFactory
+                        .Generate(Sql, Version, DefaultSchema, DefaultDatabase, DefaultServer);
                 }
 
                 return _batches;
             }
+            private set => _batches = value.ToList();
         }
         
         private List<IdentifierInfo> _doers;
@@ -120,12 +131,7 @@ namespace SqlAnalyser
             {
                 if (_doers == null)
                 {
-                    _doers = new List<IdentifierInfo>();
-
-                    foreach (var batch in Batches)
-                    {
-                         _doers.AddRange(batch.Doers);
-                    }
+                    _doers = Batches.SelectMany(x => x.Doers).Distinct().ToList();
                 }
 
                 return _doers;
@@ -139,31 +145,10 @@ namespace SqlAnalyser
             {
                 if (_references == null)
                 {
-                    _references = new List<IdentifierInfo>();
-
-                    foreach (var batch in Batches)
-                    {
-                        _references.AddRange(batch.References);
-                    }
+                    _references = Batches.SelectMany(x => x.References).Distinct().ToList();
                 }
 
                 return _references;
-            }
-        }
-
-        private BatchTypes? _batchType;
-        public BatchTypes BatchType
-        {
-            get
-            {
-                if (!_batchType.HasValue)
-                {
-                    var types = Doers.Distinct().Select(x => x.BatchTypes).ToList();
-
-                    _batchType = types.Count == 1 ? types.First() : Internal.BatchTypes.Other;
-                }
-
-                return _batchType.Value;
             }
         }
     }

@@ -2,9 +2,9 @@
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser.Internal
+namespace SqlAnalyser.Internal.Batches
 {
-    public class BatchInfo
+    public class BatchInfo : IBatchInfo
     {
         public int Order { get; }
         

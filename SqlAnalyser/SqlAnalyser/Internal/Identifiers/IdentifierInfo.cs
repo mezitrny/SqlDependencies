@@ -22,9 +22,9 @@ namespace SqlAnalyser.Internal
             }
             
             BatchTypes = type;
-            Server = new Qualifier(server);
-            Database = new Qualifier(database);
-            Schema = new Qualifier(schema);
+            Server = new Qualifier(server, QualifierTypes.Server);
+            Database = new Qualifier(database, QualifierTypes.Database);
+            Schema = new Qualifier(schema, QualifierTypes.Schema);
             Name = name;
         }
         

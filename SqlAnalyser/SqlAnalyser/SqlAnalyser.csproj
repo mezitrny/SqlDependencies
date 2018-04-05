@@ -46,11 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Internal\Batches\BatchFactory.cs" />
     <Compile Include="Internal\Batches\BatchTypes.cs" />
     <Compile Include="Internal\Batches\BatchInfo.cs" />
+    <Compile Include="Internal\Batches\IBatchFactory.cs" />
+    <Compile Include="Internal\Batches\IBatchInfo.cs" />
     <Compile Include="Internal\Identifiers\IdentifierInfo.cs" />
     <Compile Include="Internal\Identifiers\IdentifierTypes.cs" />
     <Compile Include="Internal\Identifiers\Qualifier.cs" />
+    <Compile Include="Internal\Identifiers\QualifierTypes.cs" />
     <Compile Include="Internal\SqlParser.cs" />
     <Compile Include="Internal\Visitors\DoerVisitor.cs" />
     <Compile Include="Internal\Visitors\ReferenceVisitor.cs" />

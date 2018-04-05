@@ -4,10 +4,12 @@
     {
         public string Name { get; }
         public string DefaultName { get; set; }
+        public QualifierTypes Type { get; }
 
-        public Qualifier(string name)
+        public Qualifier(string name, QualifierTypes type)
         {
             Name = name;
+            Type = type;
         }
 
         public string FullName
@@ -43,7 +45,7 @@
         
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return string.Concat(Type, Name ?? string.Empty).GetHashCode();
         }
 
         public override bool Equals(object obj) => Equals(obj as IdentifierInfo);
@@ -55,7 +57,7 @@
                 return false;
             }
 
-            return FullName == other.FullName;
+            return Type == other.Type && FullName == other.FullName;
         }
 
         public static bool operator ==(Qualifier left, Qualifier right)
