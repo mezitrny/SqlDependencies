@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
 using SqlAnalyser.Internal;
+using SqlAnalyser.Internal.Identifiers;
+using SqlAnalyser.Internal.Visitors;
 
-namespace SqlAnalyser.Tests
+namespace SqlAnalyser.Tests.Internal.Visitors
 {
     [TestFixture]
     public class ReferenceScannerTests
@@ -15,9 +16,17 @@ namespace SqlAnalyser.Tests
 	    {
 		    var batches = SqlParser.Parse(sql, SqlVersion.Sql100, out var errors);
 			
-		    var sut = new ReferenceVisitor(schema, database, server);
+		    var sut = new ReferenceVisitor();
+		    var result = new List<IdentifierInfo>();
 
-		    return batches.SelectMany(x => sut.GetReferences(x)).ToList();
+		    foreach (var sqlBatch in batches)
+		    {
+			    (var references, var doers) = sut.GetReferences(sqlBatch, schema, database, server);
+				    
+			    result.AddRange(references); 
+		    }
+		    
+		    return result;
 	    }
 	    
 	    [Test]

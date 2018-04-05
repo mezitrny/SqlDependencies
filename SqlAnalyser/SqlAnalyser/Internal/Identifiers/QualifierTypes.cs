@@ -1,4 +1,4 @@
-﻿namespace SqlAnalyser.Internal
+﻿namespace SqlAnalyser.Internal.Identifiers
 {
     public enum QualifierTypes
     {

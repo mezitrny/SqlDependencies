@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SqlAnalyser.Internal;
 using SqlAnalyser.Internal.Batches;
+using SqlAnalyser.Internal.Identifiers;
 
 namespace SqlAnalyser.Tests
 {

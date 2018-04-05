@@ -1,60 +1,53 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal
+namespace SqlAnalyser.Internal.Visitors
 {
-    public class ReferenceVisitor : TSqlFragmentVisitor
+    public class ReferenceVisitor : TSqlFragmentVisitor, IReferenceVisitor
     {
+	    
 	    private List<IdentifierInfo> _doers;
 			
-		public ReferenceVisitor(string schema = null, string database = null, string server = null)
-		{
-			_defaultSchema = schema ?? string.Empty;
-			_defaultDatabase = database ?? string.Empty;
-			_defaultServer = server ?? string.Empty;
-		}
-		
-		public ReferenceVisitor(IEnumerable<IdentifierInfo> doers)
-		{
-			_doers = doers.ToList();
-			
-			var doer = _doers.FirstOrDefault();
-			_defaultSchema = doer?.Schema.DefaultName ?? string.Empty;
-			_defaultDatabase = doer?.Database.DefaultName ?? string.Empty;
-			_defaultServer = doer?.Server.DefaultName ?? string.Empty;
-		}
-		
-		private readonly string _defaultSchema;
-		private readonly string _defaultDatabase;
-		private readonly string _defaultServer;
+		private string _defaultSchema;
+		private string _defaultDatabase;
+		private string _defaultServer;
 		
 		private List<IdentifierInfo> _references;
 		
-	    public IEnumerable<IdentifierInfo> GetReferences(TSqlBatch batch, out IEnumerable<IdentifierInfo> doers)
+	    public (IEnumerable<IdentifierInfo>, IEnumerable<IdentifierInfo>) GetReferences(TSqlBatch batch, 
+		    string schema = null, string database = null, string server = null)
 	    {
 		    if (_doers == null)
 		    {
 			    _doers = new DoerVisitor().GetReferences(batch).ToList();
 		    }
-
-		    doers = _doers;
 		    
+		    _defaultSchema = schema ?? string.Empty;
+		    _defaultDatabase = database ?? string.Empty;
+		    _defaultServer = server ?? string.Empty;
 		    _references = new List<IdentifierInfo>();
 			
 		    ExplicitVisit(batch);
 
-		    return _references;
+		    return (_references, _doers);
 	    }
 	    
-	    public IEnumerable<IdentifierInfo> GetReferences(TSqlBatch batch, IEnumerable<IdentifierInfo> doers)
+	    public (IEnumerable<IdentifierInfo>, IEnumerable<IdentifierInfo>) GetReferences(TSqlBatch batch,
+		    IEnumerable<IdentifierInfo> doers, string schema = null, string database = null, string server = null)
 	    {
 		    _doers = doers.ToList();
-
-		    return GetReferences(batch);
+			
+		    var doer = _doers.FirstOrDefault();
+		    
+		    return GetReferences(
+			    batch, 
+			    doer?.Schema.DefaultName ?? schema ?? string.Empty, 
+			    doer?.Database.DefaultName ?? database ?? string.Empty, 
+			    doer?.Server.DefaultName ?? server ?? string.Empty);
 	    }
-	    
-		public IEnumerable<IdentifierInfo> GetReferences(TSqlBatch batch) => GetReferences(batch, out var nothing);
+			
 		
 		public override void Visit(ProcedureReference node)
 		{

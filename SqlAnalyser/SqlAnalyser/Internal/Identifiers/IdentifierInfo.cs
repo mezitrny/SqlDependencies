@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SqlAnalyser.Internal
+namespace SqlAnalyser.Internal.Identifiers
 {
     public class IdentifierInfo
     {

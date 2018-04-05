@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal.Identifiers;
 
 namespace SqlAnalyser.Internal.Batches
 {

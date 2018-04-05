@@ -1,6 +1,6 @@
-﻿namespace SqlAnalyser.Internal
+﻿namespace SqlAnalyser.Internal.Identifiers
 {
-    public enum Identifiers
+    public enum IdentifierTypes
     {
         Table, Procedure, Function, Column
     }

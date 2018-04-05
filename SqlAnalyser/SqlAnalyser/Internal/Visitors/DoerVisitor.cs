@@ -1,29 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal.Identifiers;
+using SqlAnalyser.Internal.Visitors;
 
 namespace SqlAnalyser.Internal
 {
-    public class DoerVisitor : TSqlFragmentVisitor
+    public class DoerVisitor : TSqlFragmentVisitor, IDoerVisitor
 		{
-			public DoerVisitor(string schema = null, string database = null, string server = null)
+			private string _defaultSchema;
+			private string _defaultDatabase;
+			private string _defaultServer;
+			
+			private List<IdentifierInfo> _names;
+
+			public IEnumerable<IdentifierInfo> GetReferences(TSqlBatch batch, string schema = null, 
+				string database = null, string server = null)
 			{
 				_defaultSchema = schema ?? string.Empty;
 				_defaultDatabase = database ?? string.Empty;
 				_defaultServer = server ?? string.Empty;
-			}
-			
-			private readonly string _defaultSchema;
-			private readonly string _defaultDatabase;
-			private readonly string _defaultServer;
-			
-			private List<IdentifierInfo> _names;
-			private TSqlBatch _batch;
-
-			public IEnumerable<IdentifierInfo> GetReferences(TSqlBatch batch)
-			{
+				
 				_names = new List<IdentifierInfo>();
-				_batch = batch;
 				
 				ExplicitVisit(batch);
 

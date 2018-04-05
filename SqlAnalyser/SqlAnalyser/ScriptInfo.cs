@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using SqlAnalyser.Internal;
 using SqlAnalyser.Internal.Batches;
+using SqlAnalyser.Internal.Identifiers;
 
 namespace SqlAnalyser
 {

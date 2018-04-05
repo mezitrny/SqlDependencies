@@ -15,13 +15,13 @@ namespace SqlAnalyser.Internal
 			using (var reader = new StringReader(sql.Trim()))
 			{
 				var fragment = parser.Parse(reader, out errors);
-					
-				if (fragment is TSqlScript script)
+
+				if (errors.Any() || !(fragment is TSqlScript script))
 				{
-					return script.Batches;
+					return new TSqlBatch[]{ };
 				}
-				
-				return new TSqlBatch[]{ };
+					
+				return script.Batches;
 			}
 		}
 

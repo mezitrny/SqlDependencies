@@ -1,11 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal.Identifiers;
+using SqlAnalyser.Internal.Visitors;
 
 namespace SqlAnalyser.Internal.Batches
 {
     public class BatchInfo : IBatchInfo
     {
+        internal IDoerVisitor DoerVisitor = new DoerVisitor();
+        internal IReferenceVisitor ReferenceVisitor = new ReferenceVisitor();
+        
         public int Order { get; }
         
         private string _defaultDatabase;
@@ -16,16 +21,22 @@ namespace SqlAnalyser.Internal.Batches
             {
                 if (value != _defaultDatabase)
                 {
-                    foreach (var referenceInfo in _references)
+                    if (_references != null)
                     {
-                        referenceInfo.Database.DefaultName = value;
+                        foreach (var referenceInfo in _references)
+                        {
+                            referenceInfo.Database.DefaultName = value;
+                        }
                     }
-                    
-                    foreach (var referenceInfo in _doers)
+
+                    if (_doers != null)
                     {
-                        referenceInfo.Database.DefaultName = value;
+                        foreach (var referenceInfo in _doers)
+                        {
+                            referenceInfo.Database.DefaultName = value;
+                        }
                     }
-                    
+
                     _defaultDatabase = value;
                 }
             }
@@ -39,16 +50,22 @@ namespace SqlAnalyser.Internal.Batches
             {
                 if (value != _defaultServer)
                 {
-                    foreach (var referenceInfo in _references)
+                    if (_references != null)
                     {
-                        referenceInfo.Server.DefaultName = value;
+                        foreach (var referenceInfo in _references)
+                        {
+                            referenceInfo.Server.DefaultName = value;
+                        }
                     }
-                    
-                    foreach (var referenceInfo in _doers)
+
+                    if (_doers != null)
                     {
-                        referenceInfo.Server.DefaultName = value;
+                        foreach (var referenceInfo in _doers)
+                        {
+                            referenceInfo.Server.DefaultName = value;
+                        }
                     }
-                    
+
                     _defaultServer = value;
                 }
             }
@@ -62,15 +79,22 @@ namespace SqlAnalyser.Internal.Batches
             {
                 if (value != _defaultSchema)
                 {
-                    foreach (var referenceInfo in _references)
+                    if (_references != null)
                     {
-                        referenceInfo.Schema.DefaultName = value;
+                        foreach (var referenceInfo in _references)
+                        {
+                            referenceInfo.Schema.DefaultName = value;
+                        }
+                    }
+
+                    if (_doers != null)
+                    {
+                        foreach (var referenceInfo in _doers)
+                        {
+                            referenceInfo.Schema.DefaultName = value;
+                        }
                     }
                     
-                    foreach (var referenceInfo in _doers)
-                    {
-                        referenceInfo.Schema.DefaultName = value;
-                    }
                     
                     _defaultSchema = value;
                 }
@@ -88,7 +112,7 @@ namespace SqlAnalyser.Internal.Batches
                         string.Empty, 
                         Value.ScriptTokenStream
                             .Skip(Value.FirstTokenIndex)
-                            .Take(Value.FragmentLength)
+                            .Take(Value.LastTokenIndex + 1 - Value.FirstTokenIndex)
                             .Select(x => x.Text));
                 }
 
@@ -103,12 +127,13 @@ namespace SqlAnalyser.Internal.Batches
             {
                 if (_doers == null)
                 {
-                    _doers = new DoerVisitor(DefaultSchema, DefaultDatabase, DefaultServer).GetReferences(Value)
+                    _doers = DoerVisitor.GetReferences(Value, DefaultSchema, DefaultDatabase, DefaultServer)
                         .ToList();
                 }
 
                 return _doers;
             }
+            private set => _doers = value.ToList();
         }
 
         private List<IdentifierInfo> _references;
@@ -118,12 +143,20 @@ namespace SqlAnalyser.Internal.Batches
             {
                 if (_references == null)
                 {
-                    _references = new ReferenceVisitor(DefaultSchema, DefaultDatabase, DefaultServer)
-                        .GetReferences(Value, Doers).ToList();
+                    (var refs, var doers) = ReferenceVisitor
+                        .GetReferences(Value, Doers, DefaultSchema, DefaultDatabase, DefaultServer);
+
+                    References = refs;
+                    
+                    if (doers != null)
+                    {
+                        Doers = doers;
+                    }
                 }
 
                 return _references;
             }
+            private set => _references = value.ToList();
         }
 
         private BatchTypes? _batchType;
@@ -148,6 +181,14 @@ namespace SqlAnalyser.Internal.Batches
         {
             Order = order;
             Value = batch;
+        }
+        
+        public BatchInfo(TSqlBatch batch, int order, IEnumerable<IdentifierInfo> doers, IEnumerable<IdentifierInfo> references)
+        {
+            Order = order;
+            Value = batch;
+            Doers = doers;
+            References = references;
         }
         
         public BatchInfo(TSqlBatch batch, int order, string schema, string database, string server)
