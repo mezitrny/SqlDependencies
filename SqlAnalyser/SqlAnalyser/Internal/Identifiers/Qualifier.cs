@@ -6,6 +6,8 @@
         public string DefaultName { get; set; }
         public QualifierTypes Type { get; }
 
+        public string NamewithDot => string.IsNullOrWhiteSpace(Name) ? string.Empty : $"{Name}.";
+
         public Qualifier(string name, QualifierTypes type)
         {
             Name = name;
@@ -18,12 +20,12 @@
             {
                 if (!string.IsNullOrWhiteSpace(Name))
                 {
-                    return Name;
+                    return $"{Name}.";
                 }
 
                 if (!string.IsNullOrWhiteSpace(DefaultName))
                 {
-                    return DefaultName;
+                    return $"{DefaultName}.";
                 }
 
                 return string.Empty;

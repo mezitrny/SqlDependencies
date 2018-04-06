@@ -10,9 +10,9 @@ namespace SqlAnalyser.Internal.Identifiers
         public Qualifier Database { get; }
         public Qualifier Schema { get; }
         
-        public string Identifier => string.Join(".", Server.Name, Database.Name, Schema.Name, Name);
-        public string ShortIdentifier => string.Join(".", Server.ShortName, Database.ShortName, Schema.ShortName, Name);
-        public string FullIdentifier => string.Join(".", Server.FullName, Database.FullName, Schema.FullName, Name);
+        public string Identifier => string.Concat(Server.NamewithDot, Database.NamewithDot, Schema.NamewithDot, Name);
+        public string ShortIdentifier => string.Concat(Server.ShortName, Database.ShortName, Schema.ShortName, Name);
+        public string FullIdentifier => string.Concat(Server.FullName, Database.FullName, Schema.FullName, Name);
         
         public IdentifierInfo(BatchTypes type, string name, string schema, string database, string server)
         {
@@ -29,8 +29,7 @@ namespace SqlAnalyser.Internal.Identifiers
         }
         
         public IdentifierInfo(BatchTypes type, string name, string schema = null)
-        : this(type, name, schema, null, null)
-        { }
+        : this(type, name, schema, null, null) { }
 
         public override string ToString() => $"{BatchTypes}: {FullIdentifier}";
         
