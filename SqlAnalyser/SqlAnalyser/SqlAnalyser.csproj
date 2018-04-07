@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseInfo.cs" />
+    <Compile Include="IDatabaseInfo.cs" />
     <Compile Include="Internal\Batches\BatchFactory.cs" />
     <Compile Include="Internal\Batches\BatchTypes.cs" />
     <Compile Include="Internal\Batches\BatchInfo.cs" />

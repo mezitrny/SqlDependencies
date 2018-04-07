@@ -1,29 +1,59 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using SqlAnalyser.Internal;
 using SqlAnalyser.Internal.Identifiers;
 
 namespace SqlAnalyser
 {
-    public class DatabaseInfo
+    public class DatabaseInfo : IDatabaseInfo
     {
-        public IEnumerable<ScriptInfo> Fetch(IdentifierInfo identifier)
+        public string ConnectionString { get; }
+        private SqlConnection Connection { get; set; }
+
+        public string DefaultSchema
         {
-            return new ScriptInfo[] { };
+            get { return Connection.GetSchema().ToString(); }
+        }
+
+        public string DatabaseName { get; }
+        public string ServerName { get; }
+        public SqlVersion Version { get; }
+
+        public DatabaseInfo(string connection)
+        {
+            var cb = new SqlConnectionStringBuilder(connection);
+            DatabaseName = cb.InitialCatalog;
+            ServerName = cb.DataSource;
         }
         
-        public IEnumerable<ScriptInfo> Fetch(BatchTypes type)
+        public DatabaseInfo(SqlConnection connection)
         {
-            return new ScriptInfo[] { };
+            ConnectionString = connection.ConnectionString;
         }
         
-        public IEnumerable<ScriptInfo> FetchDoers(ScriptInfo script)
+        public DatabaseInfo(SqlVersion version, string defaultSchema, string databaseName, string serverName)
         {
-            return new ScriptInfo[] { };
+            DefaultSchema = defaultSchema;
+            DatabaseName = databaseName;
+            ServerName = serverName;
+            Version = version;
         }
         
-        public IEnumerable<ScriptInfo> FetchDependencies(ScriptInfo script)
+        public ScriptInfo AnalyseScript(string sql)
         {
-            return new ScriptInfo[] { };
+            throw new System.NotImplementedException();
+        }
+
+        public ScriptInfo FetchScript(string name, BatchTypes type)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<ScriptInfo> FetchScripts(BatchTypes type)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
