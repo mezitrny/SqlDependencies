@@ -4,23 +4,15 @@ using NUnit.Framework;
 using SqlAnalyser.Internal;
 using SqlAnalyser.Internal.Batches;
 using SqlAnalyser.Internal.Identifiers;
+using SqlAnalyser.Internal.Scripts;
 
-namespace SqlAnalyser.Tests
+namespace SqlAnalyser.Tests.Internal.Scripts
 {
     [TestFixture]
     public class ScriptInfoTests
     {
         [Test]
         public void ShouldCreateInstance()
-        {
-            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100);
-            
-            Assert.That(sut.Sql, Is.EqualTo("SELECT 1"));
-            Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql100));
-        }
-
-        [Test]
-        public void ShouldCreateInstanceWithDefaultnames()
         {
             var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, "A", "B", "C");
             
@@ -31,30 +23,6 @@ namespace SqlAnalyser.Tests
             Assert.That(sut.DefaultServer, Is.EqualTo("B"));
         }
 
-        [Test]
-        public void ShouldSetDefaultNames()
-        {
-            var batchOne = new Mock<IBatchInfo>();
-            var batchTwo = new Mock<IBatchInfo>();
-            
-            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, batchOne.Object, batchTwo.Object);
-
-            sut.DefaultSchema = "A";
-            Assert.That(sut.DefaultSchema, Is.EqualTo("A"));
-            batchOne.VerifySet(x => x.DefaultSchema = "A");
-            batchTwo.VerifySet(x => x.DefaultSchema = "A");
-            
-            sut.DefaultDatabase = "B";
-            Assert.That(sut.DefaultDatabase, Is.EqualTo("B"));
-            batchOne.VerifySet(x => x.DefaultDatabase = "B");
-            batchTwo.VerifySet(x => x.DefaultDatabase = "B");
-            
-            sut.DefaultServer = "C";
-            Assert.That(sut.DefaultServer, Is.EqualTo("C"));
-            batchOne.VerifySet(x => x.DefaultServer = "C");
-            batchTwo.VerifySet(x => x.DefaultServer = "C");
-        }
-        
         [Test]
         public void ShouldCollectDependencies()
         {
@@ -67,7 +35,7 @@ namespace SqlAnalyser.Tests
             var batchTwo = new Mock<IBatchInfo>();
             batchTwo.Setup(x => x.References).Returns(new[] {dependencyOne, dependencyThree});
             
-            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, batchOne.Object, batchTwo.Object);
+            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, "A", "B", "C", batchOne.Object, batchTwo.Object);
 
             Assert.That(sut.References, Is.EquivalentTo(new []{dependencyOne, dependencyTwo, dependencyThree}));
         }
@@ -84,7 +52,7 @@ namespace SqlAnalyser.Tests
             var batchTwo = new Mock<IBatchInfo>();
             batchTwo.Setup(x => x.Doers).Returns(new[] {dependencyOne, dependencyThree});
             
-            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, batchOne.Object, batchTwo.Object);
+            var sut = new ScriptInfo("SELECT 1", SqlVersion.Sql100, "A", "B", "C", batchOne.Object, batchTwo.Object);
 
             Assert.That(sut.Doers, Is.EquivalentTo(new []{dependencyOne, dependencyTwo, dependencyThree}));
         }

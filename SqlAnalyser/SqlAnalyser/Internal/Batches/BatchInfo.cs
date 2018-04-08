@@ -8,98 +8,13 @@ namespace SqlAnalyser.Internal.Batches
 {
     public class BatchInfo : IBatchInfo
     {
-        internal IDoerVisitor DoerVisitor = new DoerVisitor();
-        internal IReferenceVisitor ReferenceVisitor = new ReferenceVisitor();
+        internal IDoerVisitor DoerVisitor { private get; set; } = new DoerVisitor();
+        internal IReferenceVisitor ReferenceVisitor { private get; set; } = new ReferenceVisitor();
         
         public int Order { get; }
-        
-        private string _defaultDatabase;
-        public string DefaultDatabase
-        {
-            get => _defaultDatabase;
-            set
-            {
-                if (value != _defaultDatabase)
-                {
-                    if (_references != null)
-                    {
-                        foreach (var referenceInfo in _references)
-                        {
-                            referenceInfo.Database.DefaultName = value;
-                        }
-                    }
-
-                    if (_doers != null)
-                    {
-                        foreach (var referenceInfo in _doers)
-                        {
-                            referenceInfo.Database.DefaultName = value;
-                        }
-                    }
-
-                    _defaultDatabase = value;
-                }
-            }
-        }
-        
-        private string _defaultServer;
-        public string DefaultServer
-        {
-            get => _defaultServer;
-            set
-            {
-                if (value != _defaultServer)
-                {
-                    if (_references != null)
-                    {
-                        foreach (var referenceInfo in _references)
-                        {
-                            referenceInfo.Server.DefaultName = value;
-                        }
-                    }
-
-                    if (_doers != null)
-                    {
-                        foreach (var referenceInfo in _doers)
-                        {
-                            referenceInfo.Server.DefaultName = value;
-                        }
-                    }
-
-                    _defaultServer = value;
-                }
-            }
-        }
-        
-        private string _defaultSchema;
-        public string DefaultSchema
-        {
-            get => _defaultSchema;
-            set
-            {
-                if (value != _defaultSchema)
-                {
-                    if (_references != null)
-                    {
-                        foreach (var referenceInfo in _references)
-                        {
-                            referenceInfo.Schema.DefaultName = value;
-                        }
-                    }
-
-                    if (_doers != null)
-                    {
-                        foreach (var referenceInfo in _doers)
-                        {
-                            referenceInfo.Schema.DefaultName = value;
-                        }
-                    }
-                    
-                    
-                    _defaultSchema = value;
-                }
-            }
-        }
+        public string DefaultDatabase { get; }
+        public string DefaultServer { get; }
+        public string DefaultSchema { get; }
         
         private string _sql;
         public string Sql
@@ -177,13 +92,8 @@ namespace SqlAnalyser.Internal.Batches
 
         public TSqlBatch Value { get; }
 
-        public BatchInfo(TSqlBatch batch, int order)
-        {
-            Order = order;
-            Value = batch;
-        }
-        
-        public BatchInfo(TSqlBatch batch, int order, IEnumerable<IdentifierInfo> doers, IEnumerable<IdentifierInfo> references)
+        internal BatchInfo(TSqlBatch batch, int order, IEnumerable<IdentifierInfo> doers, 
+            IEnumerable<IdentifierInfo> references)
         {
             Order = order;
             Value = batch;
@@ -192,8 +102,9 @@ namespace SqlAnalyser.Internal.Batches
         }
         
         public BatchInfo(TSqlBatch batch, int order, string schema, string database, string server)
-        :this(batch, order)
         {
+            Order = order;
+            Value = batch;
             DefaultSchema = schema;
             DefaultDatabase = database;
             DefaultServer = server;

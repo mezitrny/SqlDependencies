@@ -1,92 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal;
 using SqlAnalyser.Internal.Batches;
 using SqlAnalyser.Internal.Identifiers;
 
-namespace SqlAnalyser
+namespace SqlAnalyser.Internal.Scripts
 {
-    public class ScriptInfo
+    public class ScriptInfo : IScriptInfo
     {
         internal IBatchFactory BatchFactory = new BatchFactory();
         
         public string Sql { get; }
         public SqlVersion Version { get; }
+        public string DefaultDatabase { get; }
+        public string DefaultServer { get; }
+        public string DefaultSchema { get; }
 
-        private string _defaultDatabase;
-        public string DefaultDatabase
-        {
-            get => _defaultDatabase;
-            set
-            {
-                if (value != _defaultDatabase)
-                {
-                    if (_batches != null)
-                    {
-                        foreach (var batchInfo in _batches)
-                        {
-                            batchInfo.DefaultDatabase = value;
-                        }
-                    }
-                    
-                    _defaultDatabase = value;
-                }
-            }
-        }
-        
-        private string _defaultServer;
-        public string DefaultServer
-        {
-            get => _defaultServer;
-            set
-            {
-                if (_batches != null)
-                {
-                    foreach (var batchInfo in _batches)
-                    {
-                        batchInfo.DefaultServer = value;
-                    }
-                }
-
-                _defaultServer = value;
-            }
-        }
-        
-        private string _defaultSchema;
-        public string DefaultSchema
-        {
-            get => _defaultSchema;
-            set
-            {
-                if (_batches != null)
-                {
-                    foreach (var batchInfo in _batches)
-                    {
-                        batchInfo.DefaultSchema = value;
-                    }
-                }
-
-                _defaultSchema = value;
-            }
-        }
-
-        public ScriptInfo(string sql, SqlVersion version)
+        public ScriptInfo(string sql, SqlVersion version, string database, string server, string schema)
         {
             Sql = sql;
             Version = version;
-        }
-        
-        public ScriptInfo(string sql, SqlVersion version, string database, string server, string schema)
-        : this(sql, version)
-        {
             DefaultDatabase = database;
             DefaultServer = server;
             DefaultSchema = schema;
         }
         
-        public ScriptInfo(string sql, SqlVersion version, params IBatchInfo[] batches)
-            : this(sql, version)
+        internal ScriptInfo(string sql, SqlVersion version, string database, string server, string schema, 
+            params IBatchInfo[] batches) : this(sql, version, database, server, schema)
         {
             Batches = batches;
         }

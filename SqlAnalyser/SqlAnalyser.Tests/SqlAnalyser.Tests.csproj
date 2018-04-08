@@ -63,15 +63,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseInfoTests.cs" />
     <Compile Include="Internal\Batches\BatchFactoryTests.cs" />
     <Compile Include="Internal\Batches\BatchInfoTests.cs" />
     <Compile Include="Internal\Identifiers\IdentifierInfoTests.cs" />
     <Compile Include="Internal\Identifiers\QualifierTests.cs" />
+    <Compile Include="Internal\Scripts\ScriptInfoTests.cs" />
     <Compile Include="Internal\SqlParserTests.cs" />
     <Compile Include="Internal\Visitors\DoerVisitorTests.cs" />
     <Compile Include="Internal\Visitors\ReferenceVisitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptInfoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

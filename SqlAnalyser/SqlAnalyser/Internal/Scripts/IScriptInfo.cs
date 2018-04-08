@@ -1,19 +1,21 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
+using SqlAnalyser.Internal.Batches;
 using SqlAnalyser.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal.Batches
+namespace SqlAnalyser.Internal.Scripts
 {
-    public interface IBatchInfo
+    public interface IScriptInfo
     {
-        int Order { get; }
+        string Sql { get; }
+        SqlVersion Version { get; }
         string DefaultDatabase { get; }
         string DefaultServer { get; }
         string DefaultSchema { get; }
-        string Sql { get; }
+        IEnumerable<ParseError> Errors { get; }
+        bool Valid { get; }
+        IEnumerable<IBatchInfo> Batches { get; }
         IEnumerable<IdentifierInfo> Doers { get; }
         IEnumerable<IdentifierInfo> References { get; }
-        BatchTypes BatchType { get; }
-        TSqlBatch Value { get; }
     }
 }
