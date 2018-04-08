@@ -31,6 +31,54 @@ namespace SqlAnalyser.Tests
             Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql140));
         }
         
+        [Test, Ignore("Wait for working SQL Server DB")]
+        public void ShouldFetchProcedure()
+        {
+            var sut = new DatabaseInfo(
+                "Data Source=ServerName;Initial Catalog=DataBaseName;Integrated Security=SSPI;");
+            
+            Assert.That(sut.DatabaseName, Is.EqualTo("DataBaseName"));
+            Assert.That(sut.ServerName, Is.EqualTo("ServerName"));
+            Assert.That(sut.DefaultSchema, Is.EqualTo("dbo"));
+            Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql140));
+        }
+        
+        [Test, Ignore("Wait for working SQL Server DB")]
+        public void ShouldFetchFunction()
+        {
+            var sut = new DatabaseInfo(
+                "Data Source=ServerName;Initial Catalog=DataBaseName;Integrated Security=SSPI;");
+            
+            Assert.That(sut.DatabaseName, Is.EqualTo("DataBaseName"));
+            Assert.That(sut.ServerName, Is.EqualTo("ServerName"));
+            Assert.That(sut.DefaultSchema, Is.EqualTo("dbo"));
+            Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql140));
+        }
+        
+        [Test, Ignore("Wait for working SQL Server DB")]
+        public void ShouldFetchView()
+        {
+            var sut = new DatabaseInfo(
+                "Data Source=ServerName;Initial Catalog=DataBaseName;Integrated Security=SSPI;");
+            
+            Assert.That(sut.DatabaseName, Is.EqualTo("DataBaseName"));
+            Assert.That(sut.ServerName, Is.EqualTo("ServerName"));
+            Assert.That(sut.DefaultSchema, Is.EqualTo("dbo"));
+            Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql140));
+        }
+        
+        [Test, Ignore("Wait for table scripting implementation")]
+        public void ShouldFetchTable()
+        {
+            var sut = new DatabaseInfo(
+                "Data Source=ServerName;Initial Catalog=DataBaseName;Integrated Security=SSPI;");
+            
+            Assert.That(sut.DatabaseName, Is.EqualTo("DataBaseName"));
+            Assert.That(sut.ServerName, Is.EqualTo("ServerName"));
+            Assert.That(sut.DefaultSchema, Is.EqualTo("dbo"));
+            Assert.That(sut.Version, Is.EqualTo(SqlVersion.Sql140));
+        }
+        
         [Test]
         public void ShouldAnalyzeScript()
         {
