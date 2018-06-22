@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal.Batches;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal.Scripts
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Scripts
 {
     public interface IScriptInfo
     {
@@ -17,5 +17,7 @@ namespace SqlAnalyser.Internal.Scripts
         IEnumerable<IBatchInfo> Batches { get; }
         IEnumerable<IdentifierInfo> Doers { get; }
         IEnumerable<IdentifierInfo> References { get; }
+        IdentifierInfo Doer { get; }
+        BatchTypes BatchType { get; }
     }
 }

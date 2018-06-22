@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using SqlAnalyser.Internal;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
 namespace SqlAnalyser.Tests.Internal.Identifiers
 {

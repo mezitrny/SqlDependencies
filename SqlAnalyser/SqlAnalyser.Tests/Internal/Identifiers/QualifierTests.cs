@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
 namespace SqlAnalyser.Tests.Internal.Identifiers
 {

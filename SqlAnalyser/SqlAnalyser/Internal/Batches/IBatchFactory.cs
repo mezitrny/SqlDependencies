@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser.Internal.Batches
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Batches
 {
     public interface IBatchFactory
     {

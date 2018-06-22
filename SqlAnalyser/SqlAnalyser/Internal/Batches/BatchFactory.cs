@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser.Internal.Batches
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Batches
 {
     public class BatchFactory : IBatchFactory
     {

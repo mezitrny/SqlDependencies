@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal.Visitors
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Visitors
 {
     public class ReferenceVisitor : TSqlFragmentVisitor, IReferenceVisitor
     {
@@ -21,7 +22,7 @@ namespace SqlAnalyser.Internal.Visitors
 	    {
 		    if (_doers == null)
 		    {
-			    _doers = new DoerVisitor().GetReferences(batch).ToList();
+			    _doers = new DoerVisitor().GetReferences(batch, schema, database, server).ToList();
 		    }
 		    
 		    _defaultSchema = schema ?? string.Empty;
@@ -72,9 +73,25 @@ namespace SqlAnalyser.Internal.Visitors
 
 		public override void Visit(FunctionCall node)
 		{
-			_references.Add(new IdentifierInfo(
-				BatchTypes.Function, 
-				node.FunctionName.Value));
+			string schema = null;
+			string database = null;
+			string server = null;
+
+			if (node.CallTarget is MultiPartIdentifierCallTarget multiPartIdentifier)
+			{
+				var identifiers = multiPartIdentifier.MultiPartIdentifier.Identifiers;
+				schema = identifiers.Count > 0 ? identifiers.Last().Value : null;
+				database = identifiers.Count > 1 ? identifiers[identifiers.Count - 2].Value : null;
+				server = identifiers.Count > 2 ? identifiers[identifiers.Count - 3].Value : null;
+			}
+			
+			var reference = new IdentifierInfo(BatchTypes.Function, node.FunctionName.Value, schema, database, server);
+			
+			reference.Schema.DefaultName = _defaultSchema;
+			reference.Database.DefaultName = _defaultDatabase;
+			reference.Server.DefaultName = _defaultServer;
+			
+			_references.Add(reference);
 			
 			base.Visit(node);
 		}

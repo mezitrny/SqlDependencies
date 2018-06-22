@@ -2,8 +2,10 @@
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
-using SqlAnalyser.Internal;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Visitors;
 
 namespace SqlAnalyser.Tests.Internal.Visitors
 {
@@ -49,7 +51,7 @@ namespace SqlAnalyser.Tests.Internal.Visitors
 	    {
 		    const string sql = "ALTER FUNCTION ThisOne() RETURNS INT AS BEGIN RETURN SomeFunc() END";            			
             			
-		    var reference = new IdentifierInfo(BatchTypes.Procedure, "ThisOne");
+		    var reference = new IdentifierInfo(BatchTypes.Function, "ThisOne");
 
 		    var result = GetReferences(sql);
 			
@@ -61,7 +63,7 @@ namespace SqlAnalyser.Tests.Internal.Visitors
 	    {
 		    const string sql = "CREATE FUNCTION ThisOne() RETURNS INT AS BEGIN RETURN SomeFunc() END";            			
             			
-		    var reference = new IdentifierInfo(BatchTypes.Procedure, "ThisOne");
+		    var reference = new IdentifierInfo(BatchTypes.Function, "ThisOne");
 
 		    var result = GetReferences(sql);
 			

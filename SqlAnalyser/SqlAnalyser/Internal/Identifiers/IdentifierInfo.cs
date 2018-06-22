@@ -1,6 +1,7 @@
 ﻿using System;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
 
-namespace SqlAnalyser.Internal.Identifiers
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers
 {
     public class IdentifierInfo
     {

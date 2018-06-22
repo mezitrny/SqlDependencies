@@ -2,7 +2,7 @@
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using RoseByte.AdoSession.Interfaces;
 
-namespace SqlAnalyser.Internal.Helpers
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Helpers
 {
     public static class SessionExtensions
     {

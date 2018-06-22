@@ -2,10 +2,10 @@
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using Moq;
 using NUnit.Framework;
-using SqlAnalyser.Internal;
-using SqlAnalyser.Internal.Batches;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Visitors;
+using RoseByte.SqlAnalyser.SqlServer.Internal;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Visitors;
 
 namespace SqlAnalyser.Tests.Internal.Batches
 {

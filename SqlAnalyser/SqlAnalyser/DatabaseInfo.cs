@@ -1,11 +1,11 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using RoseByte.AdoSession;
-using SqlAnalyser.Internal.Helpers;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Scripts;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Helpers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Scripts;
 
-namespace SqlAnalyser
+namespace RoseByte.SqlAnalyser.SqlServer
 {
     public class DatabaseInfo : IDatabaseInfo
     {
@@ -23,12 +23,12 @@ namespace SqlAnalyser
             DefaultSchema = defaultSchema ?? Session.GetScalar<string>("SELECT SCHEMA_NAME()");
         }
 
-        public ScriptInfo AnalyseScript(string sql)
+        public IScriptInfo AnalyseScript(string sql)
         {
             return new ScriptInfo(sql, Version, DatabaseName, ServerName, DefaultSchema);
         }
 
-        public ScriptInfo FetchScript(IdentifierInfo identifier)
+        public IScriptInfo FetchScript(IdentifierInfo identifier)
         {
             var script = Session.GetScalar<string>(
                 "OBJECT_DEFINITION(OBJECT_ID('@Id'))",

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 using NUnit.Framework;
-using SqlAnalyser.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
 
 namespace SqlAnalyser.Tests.Batches
 {

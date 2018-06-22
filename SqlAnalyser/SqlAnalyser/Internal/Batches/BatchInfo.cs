@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Visitors;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Visitors;
 
-namespace SqlAnalyser.Internal.Batches
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Batches
 {
     public class BatchInfo : IBatchInfo
     {
+        private static List<BatchTypes> RoutineTypes = new List<BatchTypes>
+        {
+            BatchTypes.Function, BatchTypes.Procedure, BatchTypes.View
+        };
         internal IDoerVisitor DoerVisitor { private get; set; } = new DoerVisitor();
         internal IReferenceVisitor ReferenceVisitor { private get; set; } = new ReferenceVisitor();
         
@@ -83,7 +87,18 @@ namespace SqlAnalyser.Internal.Batches
                 {
                     var types = Doers.Distinct().Select(x => x.BatchTypes).ToList();
 
-                    _batchType = types.Count == 1 ? types.First() : BatchTypes.Other;
+                    if (types.Count == 1)
+                    {
+                        _batchType = types.First();
+                    }
+                    else if (types.Count(x => RoutineTypes.Contains(x)) == 1)
+                    {
+                        _batchType = types.First(x => RoutineTypes.Contains(x));
+                    }
+                    else
+                    {
+                        _batchType = BatchTypes.Other;
+                    }
                 }
 
                 return _batchType.Value;

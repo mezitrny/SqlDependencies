@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
-namespace SqlAnalyser.Internal
+namespace RoseByte.SqlAnalyser.SqlServer.Internal
 {
 	public static class SqlParser
 	{

@@ -1,4 +1,4 @@
-﻿namespace SqlAnalyser.Internal.Identifiers
+﻿namespace RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers
 {
     public enum QualifierTypes
     {

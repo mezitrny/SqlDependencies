@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using SqlAnalyser.Internal;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Scripts;
+﻿using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Scripts;
 
-namespace SqlAnalyser
+namespace RoseByte.SqlAnalyser.SqlServer
 {
     public interface IDatabaseInfo
     {
-        ScriptInfo AnalyseScript(string sql);
-        ScriptInfo FetchScript(IdentifierInfo identifier);
+        IScriptInfo AnalyseScript(string sql);
+        IScriptInfo FetchScript(IdentifierInfo identifier);
     }
 }

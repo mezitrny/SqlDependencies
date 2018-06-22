@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal.Batches
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Batches
 {
     public interface IBatchInfo
     {

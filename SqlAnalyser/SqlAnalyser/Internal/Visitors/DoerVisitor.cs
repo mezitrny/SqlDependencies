@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Visitors;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
 
-namespace SqlAnalyser.Internal
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Visitors
 {
     public class DoerVisitor : TSqlFragmentVisitor, IDoerVisitor
 		{
@@ -67,7 +66,7 @@ namespace SqlAnalyser.Internal
 			public override void Visit(FunctionStatementBody node)
 			{
 				var reference = new IdentifierInfo(
-					BatchTypes.Procedure,
+					BatchTypes.Function,
 					node.Name.BaseIdentifier.Value,
 					node.Name.SchemaIdentifier?.Value ?? string.Empty,
 					node.Name.DatabaseIdentifier?.Value ?? string.Empty,
@@ -90,6 +89,24 @@ namespace SqlAnalyser.Internal
 					node.ProcedureReference.Name.SchemaIdentifier?.Value ?? string.Empty,
 					node.ProcedureReference.Name.DatabaseIdentifier?.Value ?? string.Empty,
 					node.ProcedureReference.Name.ServerIdentifier?.Value ?? string.Empty);
+				
+				reference.Schema.DefaultName = _defaultSchema;
+				reference.Database.DefaultName = _defaultDatabase;
+				reference.Server.DefaultName = _defaultServer;
+				
+				_names.Add(reference);
+
+				base.Visit(node);
+			}
+
+			public override void Visit(ViewStatementBody node)
+			{
+				var reference = new IdentifierInfo(
+					BatchTypes.View,
+					node.SchemaObjectName.BaseIdentifier.Value,
+					node.SchemaObjectName.SchemaIdentifier?.Value ?? string.Empty,
+					node.SchemaObjectName.DatabaseIdentifier?.Value ?? string.Empty,
+					node.SchemaObjectName.ServerIdentifier?.Value ?? string.Empty);
 				
 				reference.Schema.DefaultName = _defaultSchema;
 				reference.Database.DefaultName = _defaultDatabase;

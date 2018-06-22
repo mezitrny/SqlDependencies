@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace SqlAnalyser.Internal.Helpers
+namespace RoseByte.SqlAnalyser.SqlServer.Internal.Helpers
 {
     public static class SqlConnectionStringBuilderExtensions
     {

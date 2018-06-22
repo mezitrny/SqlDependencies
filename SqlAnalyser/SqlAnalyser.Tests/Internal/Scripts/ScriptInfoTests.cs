@@ -1,10 +1,10 @@
-﻿using Microsoft.SqlServer.TransactSql.ScriptDom;
+﻿using System.Linq;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using Moq;
 using NUnit.Framework;
-using SqlAnalyser.Internal;
-using SqlAnalyser.Internal.Batches;
-using SqlAnalyser.Internal.Identifiers;
-using SqlAnalyser.Internal.Scripts;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Batches;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Identifiers;
+using RoseByte.SqlAnalyser.SqlServer.Internal.Scripts;
 
 namespace SqlAnalyser.Tests.Internal.Scripts
 {
@@ -141,6 +141,60 @@ namespace SqlAnalyser.Tests.Internal.Scripts
             Assert.That(sut.Valid, Is.True);
             Assert.That(sut.Batches, Is.EquivalentTo(new []{batchOne.Object}));
             factory.Verify(x => x.Generate(It.IsAny<string>(), It.IsAny<SqlVersion>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void ShouldReturnFirstDoerAsFunction()
+        {
+            var sql = "CREATE FUNCTION trd.TestFunction() RETURNS INT AS BEGIN RETURN 1 END";
+            var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
+            
+            Assert.That(sut.Doers.FirstOrDefault()?.BatchTypes, Is.EqualTo(BatchTypes.Function));
+            Assert.That(sut.Doers.FirstOrDefault()?.Name, Is.EqualTo("TestFunction"));
+            Assert.That(sut.Doers.FirstOrDefault()?.Schema.Name, Is.EqualTo("trd"));
+        }
+        
+        [Test]
+        public void ShouldReturnFirstDoerAsView()
+        {
+            var sql = "CREATE VIEW trd.TestView AS SELECT 'I''am test view, watch me!' AS Message";
+            var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
+            
+            Assert.That(sut.Doers.FirstOrDefault()?.BatchTypes, Is.EqualTo(BatchTypes.View));
+            Assert.That(sut.Doers.FirstOrDefault()?.Name, Is.EqualTo("TestView"));
+            Assert.That(sut.Doers.FirstOrDefault()?.Schema.Name, Is.EqualTo("trd"));
+        }
+        
+        [Test]
+        public void ShouldReturnFirstDependency()
+        {
+            var sql = "CREATE VIEW trd.TestView AS SELECT * FROM trd.Dependency";
+            var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
+            
+            Assert.That(sut.References.FirstOrDefault()?.BatchTypes, Is.EqualTo(BatchTypes.Table));
+            Assert.That(sut.References.FirstOrDefault()?.Name, Is.EqualTo("Dependency"));
+            Assert.That(sut.References.FirstOrDefault()?.Schema.FullName, Is.EqualTo("trd."));
+            Assert.That(sut.References.FirstOrDefault()?.Schema.Name, Is.EqualTo("trd"));
+        }
+        
+        [Test]
+        public void ShouldReturnDoer()
+        {
+            var sql = "CREATE VIEW trd.TestView AS SELECT * FROM trd.Dependency";
+            var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
+            
+            Assert.That(sut.Doer.BatchTypes, Is.EqualTo(BatchTypes.View));
+            Assert.That(sut.Doer.Name, Is.EqualTo("TestView"));
+            Assert.That(sut.Doer.Schema.Name, Is.EqualTo("trd"));
+        }
+        
+        [Test]
+        public void ShouldReturnType()
+        {
+            var sql = "CREATE VIEW trd.TestView AS SELECT * FROM trd.Dependency";
+            var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
+            
+            Assert.That(sut.BatchType, Is.EqualTo(BatchTypes.View));
         }
     }
 }
