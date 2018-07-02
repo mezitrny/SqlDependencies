@@ -183,9 +183,9 @@ namespace SqlAnalyser.Tests.Internal.Scripts
             var sql = "CREATE VIEW trd.TestView AS SELECT * FROM trd.Dependency";
             var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
             
-            Assert.That(sut.Doer.BatchTypes, Is.EqualTo(BatchTypes.View));
-            Assert.That(sut.Doer.Name, Is.EqualTo("TestView"));
-            Assert.That(sut.Doer.Schema.Name, Is.EqualTo("trd"));
+            Assert.That(sut.Identifier.BatchTypes, Is.EqualTo(BatchTypes.View));
+            Assert.That(sut.Identifier.Name, Is.EqualTo("TestView"));
+            Assert.That(sut.Identifier.Schema.Name, Is.EqualTo("trd"));
         }
         
         [Test]
@@ -194,7 +194,7 @@ namespace SqlAnalyser.Tests.Internal.Scripts
             var sql = "CREATE VIEW trd.TestView AS SELECT * FROM trd.Dependency";
             var sut = new ScriptInfo(sql, SqlVersion.Sql100, "testBase", "testServ", "dbo");
             
-            Assert.That(sut.BatchType, Is.EqualTo(BatchTypes.View));
+            Assert.That(sut.Type, Is.EqualTo(BatchTypes.View));
         }
     }
 }

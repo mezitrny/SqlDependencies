@@ -70,28 +70,28 @@ namespace RoseByte.SqlAnalyser.SqlServer.Internal.Scripts
             private set => _batches = value.ToList();
         }
 
-        private BatchTypes? _batchType;
-        public BatchTypes BatchType
+        private BatchTypes? _type;
+        public BatchTypes Type
         {
             get
             {
-                if (!_batchType.HasValue)
+                if (!_type.HasValue)
                 {
-                    _batchType = Batches.Count() == 1 
+                    _type = Batches.Count() == 1 
                         ? Batches.First().BatchType 
                         : Batches.Any() ? BatchTypes.Other : BatchTypes.Empty;
                 }
 
-                return _batchType.Value;
+                return _type.Value;
             }
         }
 
-        private IdentifierInfo _doer;
-        public IdentifierInfo Doer
+        private IdentifierInfo _identifier;
+        public IdentifierInfo Identifier
         {
             get
             {
-                if (_doer == null)
+                if (_identifier == null)
                 {
                     if (Batches.Count() != 1)
                     {
@@ -99,7 +99,7 @@ namespace RoseByte.SqlAnalyser.SqlServer.Internal.Scripts
                     }
                     if (Batches.First().Doers.Count() == 1)
                     {
-                        _doer = Batches.First().Doers.First();
+                        _identifier = Batches.First().Doers.First();
                     }
                     else if (OtherTypes.Contains(Batches.First().BatchType))
                     {
@@ -107,11 +107,11 @@ namespace RoseByte.SqlAnalyser.SqlServer.Internal.Scripts
                     }
                     else if (Batches.Count(x => !OtherTypes.Contains(x.BatchType)) == 1)
                     {
-                        _doer = Batches.First().Doers.First(x => !OtherTypes.Contains(x.BatchTypes));
+                        _identifier = Batches.First().Doers.First(x => !OtherTypes.Contains(x.BatchTypes));
                     }
                 }
 
-                return _doer;
+                return _identifier;
             }
         } 
         

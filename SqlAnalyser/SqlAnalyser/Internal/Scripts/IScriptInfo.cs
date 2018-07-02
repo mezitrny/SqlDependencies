@@ -17,7 +17,7 @@ namespace RoseByte.SqlAnalyser.SqlServer.Internal.Scripts
         IEnumerable<IBatchInfo> Batches { get; }
         IEnumerable<IdentifierInfo> Doers { get; }
         IEnumerable<IdentifierInfo> References { get; }
-        IdentifierInfo Doer { get; }
-        BatchTypes BatchType { get; }
+        IdentifierInfo Identifier { get; }
+        BatchTypes Type { get; }
     }
 }
