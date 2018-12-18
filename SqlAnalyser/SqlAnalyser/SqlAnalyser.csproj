@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RoseByte.SqlAnalyser.SqlServer</RootNamespace>
     <AssemblyName>RoseByte.SqlAnalyser.SqlServer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,11 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SqlServer.TransactSql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
-      <HintPath>MicrosoftLibraries\Microsoft.SqlServer.TransactSql.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SqlServer.TransactSql.ScriptDom, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
-      <HintPath>MicrosoftLibraries\Microsoft.SqlServer.TransactSql.ScriptDom.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.SqlParser, Version=15.1.18068.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Microsoft.SqlServer.SqlParser.150.18068.0-xplat\lib\netstandard2.0\Microsoft.SqlServer.SqlParser.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="RoseByte.AdoSession, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\RoseByte.AdoSession.1.7.0\lib\net40\RoseByte.AdoSession.dll</HintPath>
@@ -42,10 +40,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,31 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseInfo.cs" />
-    <Compile Include="IDatabaseInfo.cs" />
-    <Compile Include="Internal\Batches\BatchFactory.cs" />
-    <Compile Include="Internal\Batches\BatchTypes.cs" />
-    <Compile Include="Internal\Batches\BatchInfo.cs" />
-    <Compile Include="Internal\Batches\IBatchFactory.cs" />
-    <Compile Include="Internal\Batches\IBatchInfo.cs" />
-    <Compile Include="Internal\Helpers\SessionExtensions.cs" />
-    <Compile Include="Internal\Helpers\SqlConnectionStringBuilderExtensions.cs" />
-    <Compile Include="Internal\Identifiers\IdentifierInfo.cs" />
-    <Compile Include="Internal\Identifiers\IdentifierTypes.cs" />
-    <Compile Include="Internal\Identifiers\Qualifier.cs" />
-    <Compile Include="Internal\Identifiers\QualifierTypes.cs" />
-    <Compile Include="Internal\Scripts\IScriptInfo.cs" />
-    <Compile Include="Internal\Scripts\ScriptInfo.cs" />
-    <Compile Include="Internal\SqlParser.cs" />
-    <Compile Include="Internal\Visitors\DoerVisitor.cs" />
-    <Compile Include="Internal\Visitors\IDoerVisitor.cs" />
-    <Compile Include="Internal\Visitors\IReferenceVisitor.cs" />
-    <Compile Include="Internal\Visitors\ReferenceVisitor.cs" />
+    <Compile Include="Scripts\Script.cs" />
+    <Compile Include="Scripts\IScript.cs" />
+    <Compile Include="IBatch.cs" />
+    <Compile Include="Batch.cs" />
+    <Compile Include="Identifiers\IdentifierInfo.cs" />
+    <Compile Include="Identifiers\IdentifierTypes.cs" />
+    <Compile Include="Scanners\DefinitionsScanner.cs" />
+    <Compile Include="Scanners\ReferencesScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="MicrosoftLibraries\Microsoft.SqlServer.TransactSql.dll" />
-    <Content Include="MicrosoftLibraries\Microsoft.SqlServer.TransactSql.ScriptDom.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
