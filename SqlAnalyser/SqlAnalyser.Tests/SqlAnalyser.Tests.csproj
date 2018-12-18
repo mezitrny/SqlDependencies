@@ -42,10 +42,6 @@
       <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Sql.BatchParser, Version=15.1.18068.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
-      <HintPath>..\packages\Microsoft.Data.Tools.Sql.BatchParser.150.18068.0-xplat\lib\netstandard2.0\Microsoft.Data.Tools.Sql.BatchParser.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.SqlServer.SqlParser, Version=15.1.18068.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Microsoft.SqlServer.SqlParser.150.18068.0-xplat\lib\netstandard2.0\Microsoft.SqlServer.SqlParser.dll</HintPath>
       <Private>True</Private>

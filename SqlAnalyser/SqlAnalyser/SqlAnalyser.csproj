@@ -34,10 +34,6 @@
       <HintPath>..\packages\Microsoft.SqlServer.SqlParser.150.18068.0-xplat\lib\netstandard2.0\Microsoft.SqlServer.SqlParser.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RoseByte.AdoSession, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\RoseByte.AdoSession.1.7.0\lib\net40\RoseByte.AdoSession.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
